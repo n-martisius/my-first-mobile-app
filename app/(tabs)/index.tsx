@@ -1,79 +1,118 @@
+// Import gradient background support
 import { LinearGradient } from 'expo-linear-gradient';
+
+// Import router hook for navigation
+import { useRouter } from 'expo-router';
+
+// Import React hook for state
 import { useState } from 'react';
-import { Button, Image, ScrollView, StyleSheet, Text, TextInput } from 'react-native';
 
-export default function ComponentDemo() {
+// Import common styles shared across screens
+import { commonStyles } from '../styles/commonStyles';
+
+// Import core React Native UI components
+import {
+  Button,
+  Image,
+  ScrollView,
+  Text,
+  TextInput
+} from 'react-native';
+
+export default function HomeScreen() {
+  // Router instance used to move between screens
+  const router = useRouter();
+
+  // State variables for user input
   const [name, setName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [city, setCity] = useState('');
   const [age, setAge] = useState('');
-  const birthYear = new Date().getFullYear() - parseInt(age || '0', 10);
-  return (
-    <LinearGradient colors={['#233b4b', '#5d8994']} style={styles.container}>
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Welcome!</Text>
-      <Image  
-      source={{uri: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F531880%2Fpexels-photo-531880.jpeg%3Fcs%3Dsrgb%26dl%3Dpexels-pixabay-531880.jpg%26fm%3Djpg&f=1&nofb=1&ipt=6f7c77d30b48a7ca1c715e434ccb8669353e3357c4049fc5c2d7e11a80f197e2'}}
-      style={styles.image}
-      />
-      <TextInput
-      style={styles.input}
-      placeholder="Your name"
-      value = {name}
-      onChangeText={setName}
-      />
-      <Button title = "Say Hello" onPress={() => alert(`Hello, ${name || 'Guest'}!`)} />
-      <Text style={styles.note}>Type your name and press the button!</Text>
-      <TextInput
-      style={styles.input}
-      placeholder="Your age"
-      value = {age}
-      onChangeText={setAge}
-      />
 
-      <Button title = "When were you born?" onPress={() => alert(`You were born in ${birthYear}.`)} />
-      <Text style={styles.note}>Type your age and press the button!</Text>
+  // Function that runs when the button is pressed
+  // It cleans input values and navigates to the Details screen
+  const handleGoToDetails = () => {
+    const safeName =
+      name.trim().length > 0 ? name.trim() : 'Guest';
+
+    const safeLastName =
+      lastName.trim().length > 0 ? lastName.trim() : '';
+
+    const safeCity =
+      city.trim().length > 0 ? city.trim() : '';
+
+    const safeAge =
+      age.trim().length > 0 ? age.trim() : '';
+
+    // Navigate to the details page and pass parameters
+    router.push({
+      pathname: '/details',
+      params: {
+        name: safeName,
+        lastName: safeLastName,
+        city: safeCity,
+        age: safeAge,
+      },
+    });
+  };
+
+  return (
+    // Gradient background wrapper
+    <LinearGradient
+      colors={['#233b4b', '#5d8994']}
+      style={commonStyles.container}
+    >
+      {/* Scrollable content area */}
+      <ScrollView contentContainerStyle={commonStyles.container}>
+        {/* Page title */}
+        <Text style={commonStyles.title}>
+          Welcome to Home
+        </Text>
+
+        {/* Display image */}
+        <Image
+          source={{
+            uri: 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.pexels.com%2Fphotos%2F531880%2Fpexels-photo-531880.jpeg',
+          }}
+          style={commonStyles.image}
+        />
+
+        {/* Input fields for user information */}
+        <TextInput
+          style={commonStyles.input}
+          placeholder="Enter your name"
+          value={name}
+          onChangeText={setName}
+        />
+
+        <TextInput
+          style={commonStyles.input}
+          placeholder="Enter your last name"
+          value={lastName}
+          onChangeText={setLastName}
+        />
+
+        <TextInput
+          style={commonStyles.input}
+          placeholder="Enter your city"
+          value={city}
+          onChangeText={setCity}
+        />
+
+        <TextInput
+          style={commonStyles.input}
+          placeholder="Enter your age"
+          value={age}
+          onChangeText={setAge}
+        />
+
+        {/* Button to move to Details screen */}
+        <Button
+          title="Go to Details"
+          onPress={handleGoToDetails}
+        />
       </ScrollView>
-      </LinearGradient>
+    </LinearGradient>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#ffffff',
-    textAlign: 'left',
-  },
-    subtitle: {
-    fontSize: 16,
-    color: '#a4bcce',
-    marginTop: 6,
-  },
-  image: {
-    width: '80%',
-    height: 150,
-    borderRadius: 10,
-    marginVertical:10,
-  },
-  input: {
-    height: 40,
-    borderColor: '#ffffff',
-    color: '#ffffff',
-    backgroundColor: 'rgba(151, 189, 206, 0.2)',
-    borderWidth: 1,
-    width: '80%',
-    padding: 10,
-    marginVertical: 10,
-  },
-  note: {
-    marginTop: 20,
-    fontSize: 14,
-    color: '#a4bcce',
-  }
-})
