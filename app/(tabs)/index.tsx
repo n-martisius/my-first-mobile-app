@@ -4,8 +4,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 // Import router hook for navigation
 import { useRouter } from 'expo-router';
 
-// Import React hook for state
-import { useState } from 'react';
+// Import React hooks
+import { useEffect, useState } from 'react';
 
 // Import common styles shared across screens
 import { commonStyles } from '../styles/commonStyles';
@@ -19,6 +19,13 @@ import {
   TextInput
 } from 'react-native';
 
+// Import gradient themes
+import { GRADIENT_THEMES } from '../themes';
+// Import custom hook to get current theme
+import { loadGradient } from '../storage';
+// Import navigation focus effect hook
+import { useFocusEffect } from '@react-navigation/native';
+
 export default function HomeScreen() {
   // Router instance used to move between screens
   const router = useRouter();
@@ -28,6 +35,23 @@ export default function HomeScreen() {
   const [lastName, setLastName] = useState('');
   const [city, setCity] = useState('');
   const [age, setAge] = useState('');
+  // Update theme when screen is focused
+  useFocusEffect(() => {
+  loadGradient().then((savedTheme) => {
+    if (savedTheme && GRADIENT_THEMES[savedTheme]) {
+      setTheme(savedTheme);
+    }
+  });
+});
+
+  // State variable for current theme
+  const [theme, setTheme] = useState('ocean');
+  // Load saved theme on component mount
+  useEffect(() => {
+    loadGradient().then(saved => {
+      if (saved) setTheme(saved);
+    });
+  }, []);
 
   // Function that runs when the button is pressed
   // It cleans input values and navigates to the Details screen
@@ -59,14 +83,14 @@ export default function HomeScreen() {
   return (
     // Gradient background wrapper
     <LinearGradient
-      colors={['#233b4b', '#5d8994']}
+     colors={GRADIENT_THEMES[theme] as [string, string, ...string[]]}
       style={commonStyles.container}
     >
       {/* Scrollable content area */}
       <ScrollView contentContainerStyle={commonStyles.container}>
         {/* Page title */}
         <Text style={commonStyles.title}>
-          Welcome to Home
+          Welcome to the Home Screen
         </Text>
 
         {/* Display image */}
@@ -111,8 +135,15 @@ export default function HomeScreen() {
           title="Go to Details"
           onPress={handleGoToDetails}
         />
+        {/* Button to move to Storage Demo */}
+        <Button
+          title="Open Storage Demo"
+          onPress={() => router.push('/storeDetails')}
+        />
       </ScrollView>
     </LinearGradient>
   );
+  
 }
+
 

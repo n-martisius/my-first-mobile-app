@@ -7,9 +7,22 @@ import {
   Text
 } from 'react-native';
 // Import common styles shared across screens
+import { useEffect, useState } from 'react';
+import { loadGradient } from './storage';
 import { commonStyles } from './styles/commonStyles';
+// Import gradient themes
+import { GRADIENT_THEMES } from './themes';
 
 export default function DetailsScreen() {
+
+  // State variable for current theme
+    const [theme, setTheme] = useState('ocean');
+    // Load saved theme on component mount
+    useEffect(() => {
+      loadGradient().then(saved => {
+        if (saved) setTheme(saved);
+      });
+    }, []);
   // Router instance for navigation
   const router = useRouter();
 
@@ -48,8 +61,8 @@ export default function DetailsScreen() {
 
   return (
     <LinearGradient
-      colors={['#233b4b', '#5d8994']}
-      style={commonStyles.container}
+      colors={GRADIENT_THEMES[theme] as [string, string, ...string[]]}
+                  style={commonStyles.container}
     >
       <ScrollView contentContainerStyle={commonStyles.container}>
         {/* Greeting text */}
