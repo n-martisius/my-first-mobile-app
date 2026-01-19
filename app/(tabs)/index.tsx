@@ -140,6 +140,14 @@ export default function HomeScreen() {
           title="Open Storage Demo"
           onPress={() => router.push('/storeDetails')}
         />
+        <Button
+          title="Open Posts"
+          onPress={() => router.push('/posts')}
+        />
+        <Button
+          title="Open Users"
+          onPress={() => router.push('/users')}
+        />
       </ScrollView>
     </LinearGradient>
   );
